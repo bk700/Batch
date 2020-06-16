@@ -1,0 +1,173 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(stringr)
+> library(glue)
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following object is masked from 'package:glue':
+
+    collapse
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+> library(readr)
+> library(magrittr)
+> 
+> # CaiCurve
+> pix_3 <- c(1230, 1615, 2090, 2601)
+> I_3 <- c(367.06164, 370.78204, 375.37107, 380.37199)
+> mod3 <- lm(I_3 ~ poly(pix_3, 3, raw = T))
+> coef3 <- mod3$coefficients
+> 
+> # File setup
+> fldr <- str_extract(string = list.files("in/"), pattern = "..._.._....")
+> files <- list.files(glue("in/", fldr), full.names = T)
+> files <- files[(str_which(files, ".csv"))]
+> names <- list.files(glue("in/", fldr))
+> names <- names[(str_which(names, ".csv"))]
+> names <- str_replace(names, pattern = ".csv", replacement = ".txt")
+> 
+> # Processing 
+> for (i in seq_along(files)) {
++   j <- read_csv(files[i], skip = 18, col_names = F) %>% 
++     dplyr::select(c(1, 3)) %>% 
++     .[1:3648, ] %>% 
++     as.data.frame()
++   j$X1 %<>% add(1)
++   j$X1 <- coef3[1] + coef3[2]*j$X1 + coef3[3]*(j$X1^2) + coef3[4]*(j$X1^3)
++   mw <- which.min(j$X1 <= 361)
++   j <- j[mw:3500, ]
++   j$X3 <- (j$X3 - min(j$X3)) / (max(j$X3) - min(j$X3))
++   write_tsv(j, path = file.path("out/", names[i]), col_names = F)
++ }
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/Calibration_Spec_Na_L~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/Calibration_Spec_Na_L~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/Calibration_Spec_Na_L~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/Calibration_Spec_Na_L~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/Calibration_Spec_Na_L~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/SLIT_FUNCTION_Na_Lamp~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/SLIT_FUNCTION_Na_Lamp~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/SLIT_FUNCTION_Na_Lamp~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/SLIT_FUNCTION_Na_Lamp~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/SLIT_FUNCTION_Na_Lamp~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual         file                                    expected   <int> <chr> <chr>      <chr>          <chr>                                   actual 1  3649 X1    an integer CIE Parameters 'in/Jul_30_2018/spec1B_He_Air_27_1.5_4~ file 2  3649 <NA>  22 columns 1 columns      'in/Jul_30_2018/spec1B_He_Air_27_1.5_4~ row 3  3650 X1    an integer CIEStandardOb~ 'in/Jul_30_2018/spec1B_He_Air_27_1.5_4~ col 4  3650 <NA>  22 columns 2 columns      'in/Jul_30_2018/spec1B_He_Air_27_1.5_4~ expected 5  3651 X1    an integer DrkSub 1931x   'in/Jul_30_2018/spec1B_He_Air_27_1.5_4~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec2_He_Air_27_1.5_5~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec2_He_Air_27_1.5_5~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec2_He_Air_27_1.5_5~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec2_He_Air_27_1.5_5~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec2_He_Air_27_1.5_5~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec3_He_Air_27_1.5_6~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec3_He_Air_27_1.5_6~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec3_He_Air_27_1.5_6~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec3_He_Air_27_1.5_6~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec3_He_Air_27_1.5_6~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec4_He_Air_26_2.5_4~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec4_He_Air_26_2.5_4~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec4_He_Air_26_2.5_4~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec4_He_Air_26_2.5_4~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec4_He_Air_26_2.5_4~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec5_He_Air_25_3.5_4~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec5_He_Air_25_3.5_4~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec5_He_Air_25_3.5_4~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec5_He_Air_25_3.5_4~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec5_He_Air_25_3.5_4~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec6_He_Air_24_4.5_4~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec6_He_Air_24_4.5_4~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec6_He_Air_24_4.5_4~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec6_He_Air_24_4.5_4~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec6_He_Air_24_4.5_4~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  X1 = col_integer()
+)
+See spec(...) for full column specifications.
+Warning: 103 parsing failures.
+row # A tibble: 5 x 5 col     row col   expected   actual          file                                   expected   <int> <chr> <chr>      <chr>           <chr>                                  actual 1  3649 X1    an integer CIE Parameters  'in/Jul_30_2018/spec7_He_Air_28_0.5_4~ file 2  3649 <NA>  22 columns 1 columns       'in/Jul_30_2018/spec7_He_Air_28_0.5_4~ row 3  3650 X1    an integer CIEStandardObs~ 'in/Jul_30_2018/spec7_He_Air_28_0.5_4~ col 4  3650 <NA>  22 columns 2 columns       'in/Jul_30_2018/spec7_He_Air_28_0.5_4~ expected 5  3651 X1    an integer DrkSub 1931x    'in/Jul_30_2018/spec7_He_Air_28_0.5_4~
+... ................. ... ............................................................................... ........ ............................................................................... ...... ............................................................................... .... ................................................................... [... truncated]
+Warning messages:
+1: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+2: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+3: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+4: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+5: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+6: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+7: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+8: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+9: In rbind(names(probs), probs_f) :
+  number of columns of result is not a multiple of vector length (arg 1)
+> 
+> proc.time()
+   user  system elapsed 
+   1.20    0.32    1.54 
